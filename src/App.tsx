@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Menu, Dropdown, Button } from 'antd';
@@ -6,6 +5,7 @@ import { DownOutlined } from '@ant-design/icons';
 import i18n from "./i18n";
 import './App.css'
 import { postData } from "./requests";
+import TranslationsList from "./TranslationsList";
 
 const languages = [
   { fullName: "Dutch", code: "nl", imgPrefix: "NL" },
@@ -102,11 +102,16 @@ export default function App() {
         <Button style={{ margin: 50 }} onClick={() => modifyResources()} type="primary">Modify Dutch Resources</Button>
         <Button style={{ margin: 50 }} onClick={() => exportData()} type="primary">Export Resources</Button>
       </div>
-      <div style={{ textAlign: "center", marginTop: 50, backgroundColor: "#f2f2f2", height: "100%" }}>
+      <div style={{ textAlign: "center", marginTop: 50, backgroundColor: "#f2f2f2" }}>
 
         <h1>Active Language: {languages.find(l => l.code === ActiveLanguage)?.fullName}</h1>
         <div className="flex jcc"><h2 style={{ width: 200, textAlign: "right" }}>Title text: </h2><div style={{ width: 200 }}>{ShowTranslations && <h2>&nbsp;{t('app_title')}</h2>}</div></div>
         <div className="flex jcc"><h2 style={{ width: 200, textAlign: "right" }}>Welcome Message: </h2><div style={{ width: 200 }}>{ShowTranslations && <h2>&nbsp;{t('welcome_message')}</h2>}</div></div>
+      </div>
+
+      <div id="table" style={{ width: 900, margin: '50px auto' }}>
+        <h1>Translations</h1>
+        <TranslationsList />
       </div>
 
     </div>
