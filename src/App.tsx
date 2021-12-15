@@ -21,11 +21,6 @@ export default function App() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    // fetchResources();
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
     if (ResourcesLocal) {
       console.log('Updating Resources')
       i18n.addResourceBundle(ActiveLanguage, 'namespace1', ResourcesLocal);
@@ -39,18 +34,6 @@ export default function App() {
 
   function fetchResources(lang) {
     setShowTranslations(false);
-    // fetch('assets/locales/fr/translation.json')
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     i18n.addResourceBundle('fr', 'namespace1', data);
-    //     console.log(data);
-    //   });
-    // fetch('assets/locales/ar/translation.json')
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     i18n.addResourceBundle('ar', 'namespace1', data);
-    //     console.log(data);
-    //   });
     fetch(`assets/locales/${lang}/translation.json`)
       .then(response => response.json())
       .then(data => {
@@ -73,14 +56,6 @@ export default function App() {
       alert('Try importing first :)')
     }
   }
-
-  // const menu = (
-  //   <Menu onClick={handleLanguageSwitch}>
-  //     <Menu.Item className={`${ActiveLanguage === 'nl' ? 'active' : ''}`} key="nl"><img alt="Dutch" src={`${imgBaseUrl}NL.svg`} /> Dutch</Menu.Item>
-  //     <Menu.Item className={`${ActiveLanguage === 'fr' ? 'active' : ''}`} key="fr"><img alt="French" src={`${imgBaseUrl}FR.svg`} /> French</Menu.Item>
-  //     <Menu.Item className={`${ActiveLanguage === 'sa' ? 'active' : ''}`} key="sa"><img alt="Arabic" src={`${imgBaseUrl}SA.svg`} /> Arabic</Menu.Item>
-  //   </Menu>
-  // );
 
   function handleLanguageSwitch({ key }) {
     if (key !== ActiveLanguage) {
