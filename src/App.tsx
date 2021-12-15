@@ -7,7 +7,12 @@ import i18n from "./i18n";
 import './App.css'
 import { postData } from "./requests";
 
-const languages = { nl: "Dutch", ar: 'Arabic', fr: "French" };
+const languages = [
+  { fullName: "Dutch", code: "nl", imgPrefix: "NL" },
+  { fullName: "French", code: "fr", imgPrefix: "FR" },
+  { fullName: "Arabic", code: "sa", imgPrefix: "SA" },
+];
+const imgBaseUrl = 'http://purecatamphetamine.github.io/country-flag-icons/3x2/';
 
 export default function App() {
   const [ShowTranslations, setShowTranslations] = useState<boolean>(true);
@@ -23,26 +28,30 @@ export default function App() {
   useEffect(() => {
     if (ResourcesLocal) {
       console.log('Updating Resources')
-      i18n.addResourceBundle('nl', 'namespace1', ResourcesLocal);
+      i18n.addResourceBundle(ActiveLanguage, 'namespace1', ResourcesLocal);
       setShowTranslations(true);
     }
-  }, [ResourcesLocal]);
+  }, [ResourcesLocal, ActiveLanguage]);
 
-  function fetchResources() {
+  useEffect(() => {
+    fetchResources(ActiveLanguage);
+  }, [ActiveLanguage]);
+
+  function fetchResources(lang) {
     setShowTranslations(false);
-    fetch('assets/locales/fr/translation.json')
-      .then(response => response.json())
-      .then(data => {
-        i18n.addResourceBundle('fr', 'namespace1', data);
-        console.log(data);
-      });
-    fetch('assets/locales/ar/translation.json')
-      .then(response => response.json())
-      .then(data => {
-        i18n.addResourceBundle('ar', 'namespace1', data);
-        console.log(data);
-      });
-    fetch('assets/locales/nl/translation.json')
+    // fetch('assets/locales/fr/translation.json')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     i18n.addResourceBundle('fr', 'namespace1', data);
+    //     console.log(data);
+    //   });
+    // fetch('assets/locales/ar/translation.json')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     i18n.addResourceBundle('ar', 'namespace1', data);
+    //     console.log(data);
+    //   });
+    fetch(`assets/locales/${lang}/translation.json`)
       .then(response => response.json())
       .then(data => {
         setResourcesLocal(data);
@@ -65,14 +74,13 @@ export default function App() {
     }
   }
 
-  const imgBaseUrl = 'http://purecatamphetamine.github.io/country-flag-icons/3x2/'
-  const menu = (
-    <Menu onClick={handleLanguageSwitch}>
-      <Menu.Item className={`${ActiveLanguage === 'nl' ? 'active' : ''}`} key="nl"><img alt="Dutch" src={`${imgBaseUrl}NL.svg`} /> Dutch</Menu.Item>
-      <Menu.Item className={`${ActiveLanguage === 'fr' ? 'active' : ''}`} key="fr"><img alt="French" src={`${imgBaseUrl}FR.svg`} /> French</Menu.Item>
-      <Menu.Item className={`${ActiveLanguage === 'ar' ? 'active' : ''}`} key="ar"><img alt="Arabic" src={`${imgBaseUrl}SA.svg`} /> Arabic</Menu.Item>
-    </Menu>
-  );
+  // const menu = (
+  //   <Menu onClick={handleLanguageSwitch}>
+  //     <Menu.Item className={`${ActiveLanguage === 'nl' ? 'active' : ''}`} key="nl"><img alt="Dutch" src={`${imgBaseUrl}NL.svg`} /> Dutch</Menu.Item>
+  //     <Menu.Item className={`${ActiveLanguage === 'fr' ? 'active' : ''}`} key="fr"><img alt="French" src={`${imgBaseUrl}FR.svg`} /> French</Menu.Item>
+  //     <Menu.Item className={`${ActiveLanguage === 'sa' ? 'active' : ''}`} key="sa"><img alt="Arabic" src={`${imgBaseUrl}SA.svg`} /> Arabic</Menu.Item>
+  //   </Menu>
+  // );
 
   function handleLanguageSwitch({ key }) {
     if (key !== ActiveLanguage) {
@@ -102,23 +110,30 @@ export default function App() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <header>
-        <Dropdown overlay={menu} trigger={['click']}>
+        <Dropdown overlay={
+          <Menu onClick={handleLanguageSwitch}>
+            {languages.map(lang => {
+              return (
+                <Menu.Item className={`${ActiveLanguage === lang.code ? 'active' : ''}`} key={lang.code}><img alt={lang.fullName} src={`${imgBaseUrl}${lang.imgPrefix}.svg`} />  {lang.fullName}</Menu.Item>
+              )
+            })}
+          </Menu>
+        } trigger={['click']}>
           <h3 style={{ color: "white" }}>Switch Language <DownOutlined /></h3>
         </Dropdown>
       </header>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button style={{ margin: 50 }} onClick={() => fetchResources()} type="primary">Import Resources</Button>
+        <Button style={{ margin: 50 }} onClick={() => fetchResources('nl')} type="primary">Import Resources</Button>
         <Button style={{ margin: 50 }} onClick={() => modifyResources()} type="primary">Modify Dutch Resources</Button>
         <Button style={{ margin: 50 }} onClick={() => exportData()} type="primary">Export Resources</Button>
       </div>
-      {ShowTranslations &&
-        <div style={{ textAlign: "center", marginTop: 50, backgroundColor: "#f2f2f2", height: "100%" }}>
+      <div style={{ textAlign: "center", marginTop: 50, backgroundColor: "#f2f2f2", height: "100%" }}>
 
-          <h1>Active Language: {languages[ActiveLanguage]}</h1>
-          <h2>Title text: {t('app_title')}</h2>
-          <h2>Welcome text: {t('welcome_message')}</h2>
-        </div>
-      }
+        <h1>Active Language: {languages.find(l => l.code === ActiveLanguage)?.fullName}</h1>
+        <div className="flex jcc"><h2 style={{ width: 200, textAlign: "right" }}>Title text: </h2><div style={{ width: 200 }}>{ShowTranslations && <h2>&nbsp;{t('app_title')}</h2>}</div></div>
+        <div className="flex jcc"><h2 style={{ width: 200, textAlign: "right" }}>Welcome Message: </h2><div style={{ width: 200 }}>{ShowTranslations && <h2>&nbsp;{t('welcome_message')}</h2>}</div></div>
+      </div>
+
     </div>
   )
 

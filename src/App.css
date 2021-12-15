@@ -11,6 +11,9 @@ header{
   padding: 0 20px;
 }
 
+.flex{display: flex;}
+.jcc{justify-content: center;}
+
 .ant-dropdown-menu-item img{
   width: 30px;
 }
